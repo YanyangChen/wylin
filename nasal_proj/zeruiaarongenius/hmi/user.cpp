@@ -34,6 +34,23 @@ using namespace std;
 
 
 static int counter = 0;
+
+/*
+ * 
+ * 
+ * for(int x=0; x<10; x++)
+{
+  for(int y=0; y<10; y++)
+  {
+    static int number_of_times = 0;
+    number_of_times++;
+  }
+}
+ * use static in this fashion to prevent a variable from being reinitialized inside a loop. 
+ * For instance, in the following code, number_of_times comes out to be 100, even though the 
+ * line "static int number_of_times = 0;" is inside the inner loop, where it would apparently be executed
+ * every time the program loops.
+ * */
 static RBT_TRAJ_LINEAR_MOVE   traj_linear_move;
 static RBT_AXIS_JOG           axis_jog;
 static RBT_MULTI_AXIS_JOG     multi_axis_jog;
@@ -587,19 +604,28 @@ int clientfunc (void);
 		zsignal = *in_buffer;
       
       
-      if (zsignal == 'i')
+      if (zsignal == 'i' && motion_state)
       {
-		  
+		  axis_jog.serial_number = ++counter;
+          axis_jog.mark = 0x04;
+          axis_jog.vel = 10000;
+          write_command_buffer(axis_jog);
 		  }
       
       if (zsignal == 'n')
       {
-		  
+		  axis_jog.serial_number = ++counter; //what's axis_jog.serial_number?
+          axis_jog.mark = 0x0f;
+          axis_jog.vel = 0;
+          write_command_buffer(axis_jog); 
 		  }
 		  
-	  if (zsignal == 'o')
+	  if (zsignal == 'o' && motion_state)
       {
-		  
+		  axis_jog.serial_number = ++counter;
+          axis_jog.mark = 0x04;
+          axis_jog.vel = -10000;
+          write_command_buffer(axis_jog);
 		  }
       
       
@@ -667,7 +693,7 @@ int clientfunc (void);
 
         case 'i': //offset??
           axis_jog.serial_number = ++counter;
-          axis_jog.mark = 0xf;
+          axis_jog.mark = 0x0f;
           axis_jog.vel = 0;
           write_command_buffer(axis_jog);
           //pCoreCommandBuffer->write(axis_jog);
