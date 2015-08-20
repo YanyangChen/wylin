@@ -595,9 +595,49 @@ int connectionFd, _true = 1;
 struct sockaddr_in servaddr;
 char in_buffer[1024], out_buffer[1024];
 char zsignal;
+int bgsignal = 0;
 double var[3] = {2.2};
 
-int clientfunc (void);
+int rc1; // For the returned values
+	pthread_t thread1; // Threads pointer's
+	
+	// create socket
+	if ( (connectionFd = socket( AF_INET, SOCK_STREAM, 0 )) == -1 ) {
+		printf("Error creating socket\n");
+		exit(1);	
+	}
+	
+		// set socket port options
+	if ( setsockopt(connectionFd, SOL_SOCKET, SO_REUSEADDR, &_true, sizeof(int)) == -1 ) {
+		printf("Error setting socket port options\n");		
+		exit(1);
+	}
+	
+	// initialise address
+	memset( &servaddr, 0, sizeof(servaddr) ); // fill with 0's
+	servaddr.sin_family = PF_INET; // IPv4
+	servaddr.sin_port = htons( MY_PORT ); // port
+	servaddr.sin_addr.s_addr = inet_addr( "192.168.1.110" ); // host to network long------------------------------
+
+	// new connected socket... WAITS HERE UNTIL CONNECTED
+	if ( connect( connectionFd, (struct sockaddr *)&servaddr, sizeof(servaddr) ) == -1) {
+		printf("Error while connecting\n");
+		exit(1);
+	}
+	else
+		printf("Connection established\n");
+	
+	// create fast thread 
+	//if( (rc1=pthread_create( &thread1, NULL, &slow_receive, NULL )) )
+	//{
+	//	printf( "Thread creation failed: %d\n", rc1 );
+		//exit(1);
+	//}
+
+	/* Wait till threads are complete before main continues. Unless we  */
+	/* wait we run the risk of executing an exit which will terminate   */
+	/* the process and all threads before the threads have completed.   */
+	pthread_join( thread1, NULL ); 
     while(!STOP) {
       monitor_serialport();
       IMU_Gesture();
@@ -611,15 +651,50 @@ int clientfunc (void);
       
       
 		zsignal = *in_buffer;
-
+	if (zsignalp != 'a'){
       if (zsignal =='a')  //sound activated
+      
+      //~ {
+		  //~ bgsignal = 1;
+		  //~ }
+      //~ 
+      //~ 
       {
-		 motion_state = 1; 
+		 motion_state = 1;
+		task_enable_task.serial_number = ++counter;
+          write_command_buffer(task_enable_task); 
+          zsignalp = 'a';
 		  }
+	  }
+	  if (zsignalp != 's'){
      if  (zsignal =='s')  //sound stopped
+     //~ {
+		 //~ bgsignal = 0;
+		 //~ }
      {	
 		 motion_state = 0;
+		task_disable_task.serial_number = ++counter;
+          write_command_buffer(task_disable_task);
+          zsignalp = 's';
 		 }		
+		}
+		//~ if (bgsignal == 1)
+	//~ {
+		//~ 
+		 //~ motion_state = 1;
+		//~ task_enable_task.serial_number = ++counter;
+          //~ write_command_buffer(task_enable_task); 
+		  //~ }
+		//~ 
+		//~ if(bgsignal == 0)
+		//~ {	
+		 //~ motion_state = 0;
+		//~ task_disable_task.serial_number = ++counter;
+          //~ write_command_buffer(task_disable_task);
+		 //~ }	
+		//~ 
+		
+		
 		
       if (trig[ptr][1] == 1)//if yawing left or right : which ptr stands for the z axis motion?
       {
@@ -880,4 +955,5 @@ int main(int argc, char* argv[]) {
     close_keyboard();
     return 1;
 }
+
 
