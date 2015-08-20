@@ -670,7 +670,41 @@ int rc1; // For the returned values
           zsignalp = 's';
 		 }		
 		}
+  //---------------------------------detect IMU motions
+  
+  if (trig[ptr][1] == 1)//if yawing left or right : which ptr stands for the z axis motion?
+      {
+		//zsignal = 'l';  
+		printf("Received: yawing left");
+		  } 
       
+      if (trig[ptr][1] == -1)//if yawing left or right : which ptr stands for the z axis motion?
+      {
+		printf("Received: yawing rifht");
+		  } 
+      
+       if (trig[ptr][1] == 0)//if yawing left or right : which ptr stands for the z axis motion? use "&&" logic below
+      {
+		printf("Received: yawing nothing");
+		  } 
+      
+      
+      
+      if (trig[ptr][2] == 1)//if yawing left or right  : which ptr stands for the y axis motion?
+      {
+		printf("Received: tilting up");
+		  } 
+      
+	 if (trig[ptr][2] == -1)//if yawing left or right  : which ptr stands for the y axis motion?
+      {
+		printf("Received: tilting down");
+		  } 
+      
+      if ((trig[ptr][2] == 0) && (trig[ptr][1] == 0))//if yawing left or right : which ptr stands for the z axis motion?
+      {
+		printf("Received: tilting nothing");
+		  } 
+  //----------------------------------detect IMU motions    
       
       
         if (zsignal == 'i' && motion_state)
@@ -697,7 +731,43 @@ int rc1; // For the returned values
           write_command_buffer(axis_jog);
 		  }
       
+      //-------------------------IMU motions
       
+       if (zsignal == 'u' && motion_state)
+      {
+		  axis_jog.serial_number = ++counter;
+          axis_jog.mark = 0x04;
+          axis_jog.vel = -50000;
+          write_command_buffer(axis_jog);
+		  }
+		  
+	if (zsignal == 'd' && motion_state)
+      {
+		  axis_jog.serial_number = ++counter;
+          axis_jog.mark = 0x04;
+          axis_jog.vel = -50000;
+          write_command_buffer(axis_jog);
+		  }
+      
+      
+      if (zsignal == 'l' && motion_state)
+      {
+		  axis_jog.serial_number = ++counter;
+          axis_jog.mark = 0x04;
+          axis_jog.vel = -50000;
+          write_command_buffer(axis_jog);
+		  }
+      
+      if (zsignal == 'r' && motion_state)
+      {
+		  axis_jog.serial_number = ++counter;
+          axis_jog.mark = 0x04;
+          axis_jog.vel = -50000;
+          write_command_buffer(axis_jog);
+		  }
+      
+      
+      //-------------------------IMU motions
       
       //  if a key is pressed
       

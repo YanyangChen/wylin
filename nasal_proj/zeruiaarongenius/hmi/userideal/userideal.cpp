@@ -537,14 +537,14 @@ int nasal_motion_key(int key)
         case '/': mark = 0x01; idx = 0; dir = 1; break;
         case '*': mark = 0x01; idx = 0; dir = -1; break;
         case '-': mark = 0x01; idx = 0; bstop = 1; break;
-        case '8': mark = 0x02; idx = 1; dir = 1; break;//tilting down 
-        case '9': mark = 0x02; idx = 1; dir = -1; break;//tilting up
+        case '8': mark = 0x02; idx = 1; dir = 1; break;
+        case '9': mark = 0x02; idx = 1; dir = -1; break;
         case '7': mark = 0x02; idx = 0; bstop = 1; break;
         case '5': mark = 0x04; idx = 2; dir = 1; break;
         case '6': mark = 0x04; idx = 2; dir = -1; break;
         case '4': mark = 0x04; idx = 0; bstop = 1; break;
-        case '2': mark = 0x08; idx = 3; dir = 1; break;  //panning right
-        case '3': mark = 0x08; idx = 3; dir = -1; break;//panning left
+        case '2': mark = 0x08; idx = 3; dir = 1; break;
+        case '3': mark = 0x08; idx = 3; dir = -1; break;
         case '1': mark = 0x08; idx = 0; bstop = 1; break;
         default: return RTN_ERROR;
     }
@@ -698,35 +698,34 @@ int rc1; // For the returned values
 		
       if (trig[ptr][1] == 1)//if yawing left or right : which ptr stands for the z axis motion?
       {
-		//zsignal = 'l';  
-		printf("Received: yawing left");
+		zsignal = 'l';  
 		  } 
       
       if (trig[ptr][1] == -1)//if yawing left or right : which ptr stands for the z axis motion?
       {
-		printf("Received: yawing rifht");
+		zsignal = 'r';  
 		  } 
       
-       if (trig[ptr][1] == 0)//if yawing left or right : which ptr stands for the z axis motion? use "&&" logic below
-      {
-		printf("Received: yawing nothing");
-		  } 
+       //~ if (trig[ptr][1] == 0)//if yawing left or right : which ptr stands for the z axis motion? use "&&" logic below
+      //~ {
+		//~ zsignal = 'n';  
+		  //~ } 
       
       
       
       if (trig[ptr][2] == 1)//if yawing left or right  : which ptr stands for the y axis motion?
       {
-		printf("Received: tilting up");
+		zsignal = 'u';  
 		  } 
       
 	 if (trig[ptr][2] == -1)//if yawing left or right  : which ptr stands for the y axis motion?
       {
-		printf("Received: tilting down");
+		zsignal = 'd';  
 		  } 
       
       if ((trig[ptr][2] == 0) && (trig[ptr][1] == 0))//if yawing left or right : which ptr stands for the z axis motion?
       {
-		printf("Received: tilting nothing");
+		zsignal = 'n';  
 		  } 
       
       
@@ -760,7 +759,7 @@ int rc1; // For the returned values
       {
 		  axis_jog.serial_number = ++counter;
           axis_jog.mark = 0x04;
-          axis_jog.vel = 50000;
+          axis_jog.vel = -50000;
           write_command_buffer(axis_jog);
 		  }
 		  
@@ -785,7 +784,7 @@ int rc1; // For the returned values
       {
 		  axis_jog.serial_number = ++counter;
           axis_jog.mark = 0x04;
-          axis_jog.vel = 50000;
+          axis_jog.vel = -50000;
           write_command_buffer(axis_jog);
 		  }
       
