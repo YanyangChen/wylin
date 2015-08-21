@@ -302,8 +302,8 @@ int init()
 
   // initial parameters
   Threshold[0].left = -12;  Threshold[0].right = 12;
-  Threshold[1].left = -15;  Threshold[1].right = 15;
-  Threshold[2].left = -10;  Threshold[2].right = 10;
+  Threshold[1].left = -45;  Threshold[1].right = 45;
+  Threshold[2].left = -30;  Threshold[2].right = 30;
   large_angle_threshold.left = -65; large_angle_threshold.right = 65;
 
   // initial serial port
@@ -394,122 +394,125 @@ int IMU_Gesture()
   for (i=0; i<3; i++) {
     trig[ptr][i] = (delta[i] > Threshold[i].right) ? trig[ptr][i] = 1 : ((delta[i] < Threshold[i].left)? -1 : 0);
   }
-  //-------------------------testing trig signal
-  if (trig[ptr][1] == -1)
+  
+
+if (trig[ptr][1] == -1)
   {
-	  printf"1 is turning -1"
+	  printf("1 is turning -1");// rolling left
 	  }
   if (trig[ptr][1] == 1)
   {
-	  printf"1 is turning 1"
+	  printf("1 is turning 1"); //rolling right	
 	  }
   if (trig[ptr][1] == 0)
   {
-	  printf"1 is turning 0"
+	  printf("1 is turning 0");
 	  }
   
-  if (trig[ptr][2] == -1)
+  if (trig[ptr][2] == -1) //tilting up
   {
-	  printf"2 is turning -1"
+	  printf("2 is turning -1");
 	  }
-  if (trig[ptr][2] == 1)
+  if (trig[ptr][2] == 1) //tilting down
   {
-	  printf"2 is turning 1"
+	  printf("2 is turning 1");
 	  }
 	if (trig[ptr][2] == 0)
   {
-	  printf"2 is turning 0"
+	  printf("2 is turning 0");
 	  }
   if (trig[ptr][3] == -1)
   {
-	  printf"3 is turning -1"
+	  printf("3 is turning -1");
 	  }
 	if (trig[ptr][3] == 1)
   {
-	  printf"3 is turning 1"
+	  printf("3 is turning 1");
 	  }
 	if (trig[ptr][3] == 0)
   {
-	  printf"3 is turning 0"
+	  printf("3 is turning 0");
 	  }
-  //-------------------------testing trig signal
-  //if(trig[ptr][2]==0 && trig[k][2] != 0) trig_down.record_trig();
-  
-  large_angle_trig[0] = large_angle_trig[1];
-  large_angle_trig[1] = (delta[2] > large_angle_threshold.right || delta[2] < large_angle_threshold.left) ? 1 : 0;
-  if (large_angle_trig[0] == 0 && large_angle_trig[1]) large_trig_up.record_trig();
-  
-  //
-  if (trig[ptr][2] != 0) {
-    // check the direction
-    dir = (trig[ptr][0] >0) ? 1 : ((trig[ptr][0] < 0)? -1: 0);
-    
-    if(motion_state) {
-      multi_axis_jog.serial_number = ++counter;
-      multi_axis_jog.mark = 0x0f;
-      memcpy(multi_axis_jog.vel, ctrl_var_offset, 4*sizeof(double));
-      map_current_joint = MapJoint(current_joint);
-      multi_axis_jog.vel[map_current_joint] = dir*ctrl_var[map_current_joint] + ctrl_var_offset[map_current_joint];
-      write_command_buffer(multi_axis_jog);
-    }
-    }
-  
-  if (trig[ptr][2] == 0)
-    {
-      ref_YPR[0] = YPR[0];
-			pCoreStatus->imu.reference_YPR[0] = ref_YPR[0];
-      cnt++;
-      if(memcmp(multi_axis_jog.vel, ctrl_var_offset, 4*sizeof(double))!=0 || cnt > 100) {
-        cnt = 0 ;
-        multi_axis_jog.serial_number = ++counter;
-        multi_axis_jog.mark = 0x0f;
-        memcpy(multi_axis_jog.vel, ctrl_var_offset, 4*sizeof(double));
-        write_command_buffer(multi_axis_jog);
-      }
-      
-      // joint switch function code
-      if(trig[ptr][1] != 0 && trig[k][1] == 0 && motion_state == 1){
-        if(trig[ptr][1] > 0){
-          current_joint = (current_joint + 1) %4;
-          printf("\ncurrent joint %d\n", current_joint+1);
-          sprintf(str, "joint %d", current_joint+1);
-          speak_words(str, speak_flag);
-        }else if (trig[ptr][1] < 0){
-          current_joint = (current_joint + 3) %4;
-          printf("\ncurrent joint %d\n", current_joint+1);
-          sprintf(str, "joint %d", current_joint+1);
-          speak_words(str, speak_flag);
-        }
-      }
-    }
-  
-  if (trig_down.check_trig_down(200, 800, 3) || large_trig_up.check_trig_down(200, 2000, 2)) {
-    trig_down.set_time_q();
-    large_trig_up.set_time_q();
-    if (motion_state == 1){
-      usleep(50);
-      //task_disable_task.serial_number = ++counter;
-      //write_command_buffer(task_disable_task);
-      sprintf(str, "stop");
-    }else{
-      usleep(50);
-      task_enable_task.serial_number = ++counter;
-      write_command_buffer(task_enable_task);
-      sprintf(str, "start");
-    }
-    motion_state = !motion_state;
-    
-    if(motion_state == 0){
-      multi_axis_jog.serial_number = ++counter;
-      multi_axis_jog.mark = 0x0f;
-      memcpy(multi_axis_jog.vel, ctrl_var_offset, 4*sizeof(double));
-      write_command_buffer(multi_axis_jog);
-    }
-    speak_words(str, 1);
-  }
-  
-pCoreStatus->imu.state = motion_state;
-pCoreStatus->imu.act_jnt = current_joint;
+
+
+
+  //~ //if(trig[ptr][2]==0 && trig[k][2] != 0) trig_down.record_trig();
+  //~ 
+  //~ large_angle_trig[0] = large_angle_trig[1];
+  //~ large_angle_trig[1] = (delta[2] > large_angle_threshold.right || delta[2] < large_angle_threshold.left) ? 1 : 0;
+  //~ if (large_angle_trig[0] == 0 && large_angle_trig[1]) large_trig_up.record_trig();
+  //~ 
+  //~ //
+  //~ if (trig[ptr][2] != 0) {
+    //~ // check the direction
+    //~ dir = (trig[ptr][0] >0) ? 1 : ((trig[ptr][0] < 0)? -1: 0);
+    //~ 
+    //~ if(motion_state) {
+      //~ multi_axis_jog.serial_number = ++counter;
+      //~ multi_axis_jog.mark = 0x0f;
+      //~ memcpy(multi_axis_jog.vel, ctrl_var_offset, 4*sizeof(double));
+      //~ map_current_joint = MapJoint(current_joint);
+      //~ multi_axis_jog.vel[map_current_joint] = dir*ctrl_var[map_current_joint] + ctrl_var_offset[map_current_joint];
+      //~ write_command_buffer(multi_axis_jog);
+    //~ }
+    //~ }
+  //~ 
+  //~ if (trig[ptr][2] == 0)
+    //~ {
+      //~ ref_YPR[0] = YPR[0];
+			//~ pCoreStatus->imu.reference_YPR[0] = ref_YPR[0];
+      //~ cnt++;
+      //~ if(memcmp(multi_axis_jog.vel, ctrl_var_offset, 4*sizeof(double))!=0 || cnt > 100) {
+        //~ cnt = 0 ;
+        //~ multi_axis_jog.serial_number = ++counter;
+        //~ multi_axis_jog.mark = 0x0f;
+        //~ memcpy(multi_axis_jog.vel, ctrl_var_offset, 4*sizeof(double));
+        //~ write_command_buffer(multi_axis_jog);
+      //~ }
+      //~ 
+      //~ // joint switch function code
+      //~ if(trig[ptr][1] != 0 && trig[k][1] == 0 && motion_state == 1){
+        //~ if(trig[ptr][1] > 0){
+          //~ current_joint = (current_joint + 1) %4;
+          //~ printf("\ncurrent joint %d\n", current_joint+1);
+          //~ sprintf(str, "joint %d", current_joint+1);
+          //~ speak_words(str, speak_flag);
+        //~ }else if (trig[ptr][1] < 0){
+          //~ current_joint = (current_joint + 3) %4;
+          //~ printf("\ncurrent joint %d\n", current_joint+1);
+          //~ sprintf(str, "joint %d", current_joint+1);
+          //~ speak_words(str, speak_flag);
+        //~ }
+      //~ }
+    //~ }
+  //~ 
+  //~ if (trig_down.check_trig_down(200, 800, 3) || large_trig_up.check_trig_down(200, 2000, 2)) {
+    //~ trig_down.set_time_q();
+    //~ large_trig_up.set_time_q();
+    //~ if (motion_state == 1){
+      //~ usleep(50);
+      //~ //task_disable_task.serial_number = ++counter;
+      //~ //write_command_buffer(task_disable_task);
+      //~ sprintf(str, "stop");
+    //~ }else{
+      //~ usleep(50);
+      //~ task_enable_task.serial_number = ++counter;
+      //~ write_command_buffer(task_enable_task);
+      //~ sprintf(str, "start");
+    //~ }
+    //~ motion_state = !motion_state;
+    //~ 
+    //~ if(motion_state == 0){
+      //~ multi_axis_jog.serial_number = ++counter;
+      //~ multi_axis_jog.mark = 0x0f;
+      //~ memcpy(multi_axis_jog.vel, ctrl_var_offset, 4*sizeof(double));
+      //~ write_command_buffer(multi_axis_jog);
+    //~ }
+    //~ speak_words(str, 1);
+  //~ }
+  //~ 
+//~ pCoreStatus->imu.state = motion_state;
+//~ pCoreStatus->imu.act_jnt = current_joint;
   return RTN_OK;
 }
 
@@ -539,7 +542,7 @@ int nasal_imu_key(int key)
     return RTN_OK;
 }
 
-int nasal_motion_key(int key)   // or write another function like this and implement inside the IMU_gesture function. but first print signal
+int nasal_motion_key(int key)
 {
     unsigned int mark = 0, idx = 0;
     int bstop = 0;
@@ -572,42 +575,6 @@ int nasal_motion_key(int key)   // or write another function like this and imple
     //pCoreCommandBuffer->write(axis_jog);
     return RTN_OK;
 }
-
-//~ int nasal_motion_trig(int key)   // or write another function like this and implement inside the IMU_gesture function. but first print signal
-//~ {
-    //~ unsigned int mark = 0, idx = 0;
-    //~ int bstop = 0;
-    //~ double dir = 0;
-//~ 
-    //~ switch (key) {
-        //~ case '/': mark = 0x01; idx = 0; dir = 1; break;
-        //~ case '*': mark = 0x01; idx = 0; dir = -1; break;
-        //~ case '-': mark = 0x01; idx = 0; bstop = 1; break;
-        //~ case '8': mark = 0x02; idx = 1; dir = 1; break;
-        //~ case '9': mark = 0x02; idx = 1; dir = -1; break;
-        //~ case '7': mark = 0x02; idx = 0; bstop = 1; break;
-        //~ case '5': mark = 0x04; idx = 2; dir = 1; break;
-        //~ case '6': mark = 0x04; idx = 2; dir = -1; break;
-        //~ case '4': mark = 0x04; idx = 0; bstop = 1; break;
-        //~ case '2': mark = 0x08; idx = 3; dir = 1; break;
-        //~ case '3': mark = 0x08; idx = 3; dir = -1; break;
-        //~ case '1': mark = 0x08; idx = 0; bstop = 1; break;
-        //~ default: return RTN_ERROR;
-    //~ }
-//~ 
-    //~ axis_jog.serial_number = ++counter;
-    //~ if (bstop)
-         //~ axis_jog.vel = ctrl_var_offset[idx];
-    //~ else
-         //~ axis_jog.vel = dir * ctrl_var[idx] + ctrl_var_offset[idx];
-//~ 
-    //~ axis_jog.mark = mark;
-    //~ write_command_buffer(axis_jog);
-    //~ //pCoreCommandBuffer->write(axis_jog);
-    //~ return RTN_OK;
-//~ }
-
-
 
 int nasal_motion_key_help()
 {
@@ -669,7 +636,7 @@ int rc1; // For the returned values
 	memset( &servaddr, 0, sizeof(servaddr) ); // fill with 0's
 	servaddr.sin_family = PF_INET; // IPv4
 	servaddr.sin_port = htons( MY_PORT ); // port
-	servaddr.sin_addr.s_addr = inet_addr( "192.168.1.108" ); // host to network long------------------------------
+	servaddr.sin_addr.s_addr = inet_addr( "192.168.1.107" ); // host to network long------------------------------
 
 	// new connected socket... WAITS HERE UNTIL CONNECTED
 	if ( connect( connectionFd, (struct sockaddr *)&servaddr, sizeof(servaddr) ) == -1) {
@@ -744,41 +711,7 @@ int rc1; // For the returned values
           zsignalp = 's';
 		 }		
 		}
-  //---------------------------------detect IMU motions
-  
-  if (trig[ptr][1] == 1)//if yawing left or right : which ptr stands for the z axis motion?
-      {
-		//zsignal = 'l';  
-		printf("Received: yawing left");
-		  } 
       
-      if (trig[ptr][1] == -1)//if yawing left or right : which ptr stands for the z axis motion?
-      {
-		printf("Received: yawing rifht");
-		  } 
-      
-       if (trig[ptr][1] == 0)//if yawing left or right : which ptr stands for the z axis motion? use "&&" logic below
-      {
-		printf("Received: yawing nothing");
-		  } 
-      
-      
-      
-      if (trig[ptr][2] == 1)//if yawing left or right  : which ptr stands for the y axis motion?
-      {
-		printf("Received: tilting up");
-		  } 
-      
-	 if (trig[ptr][2] == -1)//if yawing left or right  : which ptr stands for the y axis motion?
-      {
-		printf("Received: tilting down");
-		  } 
-      
-      if ((trig[ptr][2] == 0) && (trig[ptr][1] == 0))//if yawing left or right : which ptr stands for the z axis motion?
-      {
-		printf("Received: tilting nothing");
-		  } 
-  //----------------------------------detect IMU motions    try to put this in IMU_gesture function
       
       
         if (zsignal == 'i' && motion_state)
@@ -805,43 +738,7 @@ int rc1; // For the returned values
           write_command_buffer(axis_jog);
 		  }
       
-      //-------------------------IMU motions
       
-       if (zsignal == 'u' && motion_state)
-      {
-		  axis_jog.serial_number = ++counter;
-          axis_jog.mark = 0x04;
-          axis_jog.vel = -50000;
-          write_command_buffer(axis_jog);
-		  }
-		  
-	if (zsignal == 'd' && motion_state)
-      {
-		  axis_jog.serial_number = ++counter;
-          axis_jog.mark = 0x04;
-          axis_jog.vel = -50000;
-          write_command_buffer(axis_jog);
-		  }
-      
-      
-      if (zsignal == 'l' && motion_state)
-      {
-		  axis_jog.serial_number = ++counter;
-          axis_jog.mark = 0x04;
-          axis_jog.vel = -50000;
-          write_command_buffer(axis_jog);
-		  }
-      
-      if (zsignal == 'r' && motion_state)
-      {
-		  axis_jog.serial_number = ++counter;
-          axis_jog.mark = 0x04;
-          axis_jog.vel = -50000;
-          write_command_buffer(axis_jog);
-		  }
-      
-      
-      //-------------------------IMU motions
       
       //  if a key is pressed
       
@@ -967,6 +864,46 @@ int rc1; // For the returned values
     return RTN_OK;
 }
 
+
+int IMU_motion_key(int keyy)
+{
+    unsigned int mark = 0, idx = 0;
+    int bstop = 0;
+    double dir = 0;
+
+    switch (keyy) {
+        //~ case '/': mark = 0x01; idx = 0; dir = 1; break;
+        //~ case '*': mark = 0x01; idx = 0; dir = -1; break;
+        //~ case '-': mark = 0x01; idx = 0; bstop = 1; break;
+        case '8': mark = 0x02; idx = 1; dir = 1; break;//tilting down 
+        case '9': mark = 0x02; idx = 1; dir = -1; break;//tilting up
+        case '7': mark = 0x02; idx = 0; bstop = 1; break;
+        //~ case '5': mark = 0x04; idx = 2; dir = 1; break;
+        //~ case '6': mark = 0x04; idx = 2; dir = -1; break;
+        //~ case '4': mark = 0x04; idx = 0; bstop = 1; break;
+        case '2': mark = 0x08; idx = 3; dir = 1; break;  //panning right
+        case '3': mark = 0x08; idx = 3; dir = -1; break;//panning left
+        case '1': mark = 0x08; idx = 0; bstop = 1; break;
+        default: return RTN_ERROR;
+    }
+
+    axis_jog.serial_number = ++counter;
+    if (bstop)
+         axis_jog.vel = ctrl_var_offset[idx];
+    else
+         axis_jog.vel = dir * ctrl_var[idx] + ctrl_var_offset[idx];
+
+    axis_jog.mark = mark;
+    write_command_buffer(axis_jog);
+    //pCoreCommandBuffer->write(axis_jog);
+    return RTN_OK;
+}
+
+
+
+
+
+
 int main(int argc, char* argv[]) {
     if (init() != RTN_OK) return 0;
     init_keyboard(); // start keyboard reading
@@ -974,4 +911,5 @@ int main(int argc, char* argv[]) {
     close_keyboard();
     return 1;
 }
+
 
