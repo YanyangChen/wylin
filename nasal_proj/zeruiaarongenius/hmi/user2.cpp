@@ -375,7 +375,7 @@ int MapJoint(int joint){
 
 int IMU_Gesture()
 {
-  int i=0, k = 0;
+  int i=0, k = 0; keyy = 0;
   static int current_joint = 0, map_current_joint = 0;
   char str[256];
   float delta[3], dir=0;
@@ -399,27 +399,33 @@ int IMU_Gesture()
 if (trig[ptr][1] == -1)
   {
 	  printf("1 is turning -1");// rolling left
+	  keyy = 1;
 	  }
   if (trig[ptr][1] == 1)
   {
 	  printf("1 is turning 1"); //rolling right	
+	  keyy = 2;
 	  }
   if (trig[ptr][1] == 0)
   {
 	  printf("1 is turning 0");
+	  keyy = 0;
 	  }
   
   if (trig[ptr][2] == -1) //tilting up
   {
 	  printf("2 is turning -1");
+	  keyy = 9;
 	  }
   if (trig[ptr][2] == 1) //tilting down
   {
 	  printf("2 is turning 1");
+	  keyy = 8;
 	  }
 	if (trig[ptr][2] == 0)
   {
 	  printf("2 is turning 0");
+	  keyy = 7;
 	  }
   if (trig[ptr][3] == -1)
   {
@@ -434,7 +440,7 @@ if (trig[ptr][1] == -1)
 	  printf("3 is turning 0");
 	  }
 
-
+	IMU_motion_key(keyy);
 
   //~ //if(trig[ptr][2]==0 && trig[k][2] != 0) trig_down.record_trig();
   //~ 
