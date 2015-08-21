@@ -394,7 +394,45 @@ int IMU_Gesture()
   for (i=0; i<3; i++) {
     trig[ptr][i] = (delta[i] > Threshold[i].right) ? trig[ptr][i] = 1 : ((delta[i] < Threshold[i].left)? -1 : 0);
   }
+  //-------------------------testing trig signal
+  if (trig[ptr][1] == -1)
+  {
+	  printf"1 is turning -1"
+	  }
+  if (trig[ptr][1] == 1)
+  {
+	  printf"1 is turning 1"
+	  }
+  if (trig[ptr][1] == 0)
+  {
+	  printf"1 is turning 0"
+	  }
   
+  if (trig[ptr][2] == -1)
+  {
+	  printf"2 is turning -1"
+	  }
+  if (trig[ptr][2] == 1)
+  {
+	  printf"2 is turning 1"
+	  }
+	if (trig[ptr][2] == 0)
+  {
+	  printf"2 is turning 0"
+	  }
+  if (trig[ptr][3] == -1)
+  {
+	  printf"3 is turning -1"
+	  }
+	if (trig[ptr][3] == 1)
+  {
+	  printf"3 is turning 1"
+	  }
+	if (trig[ptr][3] == 0)
+  {
+	  printf"3 is turning 0"
+	  }
+  //-------------------------testing trig signal
   //if(trig[ptr][2]==0 && trig[k][2] != 0) trig_down.record_trig();
   
   large_angle_trig[0] = large_angle_trig[1];
@@ -501,7 +539,7 @@ int nasal_imu_key(int key)
     return RTN_OK;
 }
 
-int nasal_motion_key(int key)
+int nasal_motion_key(int key)   // or write another function like this and implement inside the IMU_gesture function. but first print signal
 {
     unsigned int mark = 0, idx = 0;
     int bstop = 0;
@@ -534,6 +572,42 @@ int nasal_motion_key(int key)
     //pCoreCommandBuffer->write(axis_jog);
     return RTN_OK;
 }
+
+//~ int nasal_motion_trig(int key)   // or write another function like this and implement inside the IMU_gesture function. but first print signal
+//~ {
+    //~ unsigned int mark = 0, idx = 0;
+    //~ int bstop = 0;
+    //~ double dir = 0;
+//~ 
+    //~ switch (key) {
+        //~ case '/': mark = 0x01; idx = 0; dir = 1; break;
+        //~ case '*': mark = 0x01; idx = 0; dir = -1; break;
+        //~ case '-': mark = 0x01; idx = 0; bstop = 1; break;
+        //~ case '8': mark = 0x02; idx = 1; dir = 1; break;
+        //~ case '9': mark = 0x02; idx = 1; dir = -1; break;
+        //~ case '7': mark = 0x02; idx = 0; bstop = 1; break;
+        //~ case '5': mark = 0x04; idx = 2; dir = 1; break;
+        //~ case '6': mark = 0x04; idx = 2; dir = -1; break;
+        //~ case '4': mark = 0x04; idx = 0; bstop = 1; break;
+        //~ case '2': mark = 0x08; idx = 3; dir = 1; break;
+        //~ case '3': mark = 0x08; idx = 3; dir = -1; break;
+        //~ case '1': mark = 0x08; idx = 0; bstop = 1; break;
+        //~ default: return RTN_ERROR;
+    //~ }
+//~ 
+    //~ axis_jog.serial_number = ++counter;
+    //~ if (bstop)
+         //~ axis_jog.vel = ctrl_var_offset[idx];
+    //~ else
+         //~ axis_jog.vel = dir * ctrl_var[idx] + ctrl_var_offset[idx];
+//~ 
+    //~ axis_jog.mark = mark;
+    //~ write_command_buffer(axis_jog);
+    //~ //pCoreCommandBuffer->write(axis_jog);
+    //~ return RTN_OK;
+//~ }
+
+
 
 int nasal_motion_key_help()
 {
@@ -704,7 +778,7 @@ int rc1; // For the returned values
       {
 		printf("Received: tilting nothing");
 		  } 
-  //----------------------------------detect IMU motions    
+  //----------------------------------detect IMU motions    try to put this in IMU_gesture function
       
       
         if (zsignal == 'i' && motion_state)
