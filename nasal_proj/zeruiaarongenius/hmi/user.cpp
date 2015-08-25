@@ -1,24 +1,3 @@
- Skip to content
-This repository
-
-    Pull requests
-    Issues
-    Gist
-
-    @YanyangChen
-
-    1
-    0
-    0
-
-YanyangChen/wylin2
-
-wylin2/nasal_proj/zeruiaarongenius/hmi/user.cpp
-@YanyangChen YanyangChen a day ago
-final version
-
-1 contributor
-964 lines (826 sloc) 27.342 kB
 #include <stdio.h>
 #include <iostream>
 #include <string.h>
@@ -749,7 +728,7 @@ write_command_buffer(axis_jog);
 
  if (myfile.is_open())
 {
-    myfile << " "<< enablesig << " "<< rollsig<< " "<< delta[1]<< " "<< tiltsig<< " "<< delta[2]<<"  .\n";;
+    myfile << " "<< enablesig << " "<< rollsig<< " "<< delta[1]<< " "<< tiltsig<< " "<< delta[2]<<"  .\n";
  }  
 
 
@@ -874,19 +853,3 @@ user_loop();
 close_keyboard();
 return 1;
 }
-
-    Status
-    API
-    Training
-    Shop
-    Blog
-    About
-    Pricing
-
-    © 2015 GitHub, Inc.
-    Terms
-    Privacy
-    Security
-    Contact
-    Help
-
